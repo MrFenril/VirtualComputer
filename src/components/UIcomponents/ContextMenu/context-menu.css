@@ -1,0 +1,42 @@
+#context-menu {
+    position: fixed;
+    z-index: 10000;
+    width: 300px;
+    visibility: hidden;
+    background-color: #eeeeee;
+    color: black;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#context-menu.visible {
+    visibility: visible;
+}
+
+#context-menu ul {
+    list-style: none;
+    margin: 0px;
+    padding: 5px 0px;
+}
+
+#context-menu ul li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 0px;
+    padding: 5px;
+}
+
+#context-menu ul li:hover {
+    background-color: white;
+}
+
+#context-menu ul li img {
+    width: 24px;
+    height: 24px;
+}
+
+#context-menu svg > g {
+    fill: black;
+}
