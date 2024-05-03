@@ -1,0 +1,72 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  background-color: #121314;
+  color: white;
+  margin: 0px;
+}
+
+.terminal {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  outline: 1px solid white;
+}
+
+.terminal-line-container {
+  height: calc(100% - 40px);
+  overflow-y: auto;
+}
+
+.terminal-line {
+  padding: 2px 5px;
+  margin: 0px;
+  font-weight: 600;
+}
+
+.terminal-prompt {
+  display: flex;
+  width: 100%;
+  background-color: #242424;
+  font-size: 20px;
+  height: 40px;
+}
+
+label {
+  flex: 1 0 auto;
+  padding: 5px;
+  margin: auto;
+}
+
+.prompt {
+  margin: auto;
+  background-color: #242424;
+  font-size: 20px;
+  color: white;
+  outline: none;
+  border: none;
+  width: 100%;
+}
+
+.folder-path, .folder {
+  font-weight: 700;
+  color: #47e0ff;
+}
+.folder {
+  color: #0081cb;
+  font-weight: 800;
+}
+
+.file-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 2px 5px;
+  margin: 0px;
+  margin-bottom: 3px;
+}

@@ -1,0 +1,128 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  background-color: #121314;
+  color: white;
+  margin: 0px;
+  position: relative;
+}
+
+#content {
+  height: calc(100%);
+  position: relative;
+  /* background-image: url("./assets/img1.png"); */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* TASKBAR PANEL */
+
+#taskbar-panel {
+  position: absolute;
+  background-color: #2b2b2bfa;
+  backdrop-filter: blur(10px);
+  width: 320px;
+  bottom: 40px;
+  z-index: 10;
+  height: 0px;
+
+  /* height: 500px; */
+}
+
+#taskbar-panel.open {
+  height: 640px;
+  visibility: visible;
+  transition: height .3s;
+}
+#taskbar-panel > * {
+  visibility: hidden;
+}
+#taskbar-panel.open > * {
+  visibility: visible;
+  /* transition: visibility .1s; */
+}
+
+.panel-left {
+  -webkit-user-select: none;
+  user-select: none;
+  /* overflow: hidden; */
+  width: 48px;
+  height: 100%;
+  position: relative;
+}
+
+.panel-left:hover {
+  /* overflow: hidden; */
+  backdrop-filter: blur(5px);
+  box-shadow: 3px 1px 10px -5px black;
+  /* border-right: 1px solid rgba(0, 0, 0, 0.559); */
+  width: 80%;
+  transition:
+    width .2s,
+    box-shadow 0s;
+  transition-delay: .3s !important;
+}
+
+.bottom-panel-row {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+
+.panel-row {
+  /* display: flex; */
+
+  height: 40px;
+  overflow: hidden;
+}
+
+.panel-row:hover {
+  background-color: rgba(255, 255, 255, 0.224);
+}
+
+.panel-btn-label {
+  fill: none;
+  color: white;
+}
+
+/* TASKBAR */
+
+#taskbar {
+  height: 40px;
+  width: 100%;
+
+  display: flex;
+  background-color: rgba(28, 28, 28, 0.93);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  bottom: 0px;
+
+  z-index: 20;
+}
+
+.taskbar-btns-container {
+  height: 100%;
+  width: 100%;
+}
+
+.taskbar-btn, .panel-btn {
+  filter: none;
+  height: 100%;
+  width: 48px;
+  background: none;
+  border: none;
+}
+
+.taskbar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.224);
+}
+
+.taskbar-btn.win:hover > svg > g {
+  fill: #47BDFF;
+}
+
