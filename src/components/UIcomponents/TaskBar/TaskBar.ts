@@ -15,7 +15,7 @@ export default class TaskBar {
     private context: HTMLElement = null;
     // private preview: TaskBarPreview = null;
 
-    constructor(options?: ITaskBarOptions) {
+    constructor() {
         this.context = document.getElementById("taskbar");
         this.context
             .querySelector("#panel-btn")
@@ -26,14 +26,13 @@ export default class TaskBar {
                     : panel.classList.add("open");
             });
 
-        Object.entries(TaskManager.Processes).forEach(([key, values]) => {
+        Object.values(TaskManager.Processes).forEach((values) => {
             const [process] = values.children;
             this.addProcessToTaskbar(process);
-
         });
 
-        TaskManager.addEventListener("load", (process: IProcess, processes) => {
-           if (process.index > 1) return;
+        TaskManager.addEventListener("load", (process: IProcess) => {
+            if (process.index > 1) return;
             this.addProcessToTaskbar(process);
         });
     }
@@ -47,9 +46,7 @@ export default class TaskBar {
 
         el.classList.add("active");
 
-        el.addEventListener("click", () =>
-            process.process.MinimizeWindow()
-        );
+        el.addEventListener("click", () => process.process.MinimizeWindow());
 
         el.addEventListener("mouseenter", async () => {
             if (preview) return;
@@ -65,8 +62,6 @@ export default class TaskBar {
             preview = null;
         });
 
-        this.context
-            .querySelector(".taskbar-btns-container")
-            .appendChild(el);
+        this.context.querySelector(".taskbar-btns-container").appendChild(el);
     }
 }

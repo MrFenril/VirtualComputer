@@ -1,94 +1,107 @@
-import SimpleBar from 'simplebar';
-import 'simplebar/dist/simplebar.css';
-import moment from 'moment-timezone';
-import { CommandHandler } from '../../../types';
-import { FileType } from '../../../enum';
-import { IWindowOption, IWindowTemplate, MainTemplate, Window } from '../Window/Window';
+import SimpleBar from "simplebar";
+import "simplebar/dist/simplebar.css";
+import moment from "moment-timezone";
+import { CommandHandler } from "../../../types";
+import { FileType } from "../../../enum";
+import {
+    IWindowOption,
+    IWindowTemplate,
+    MainTemplate,
+    Window
+} from "../Window/Window";
 
 import "./shell-display.css";
 
 export default class ShellDisplay extends Window {
-
     constructor(options: IWindowOption) {
         super({
             ...options,
-            template: MainTemplate,
+            template: MainTemplate
         });
 
-        this.Context.querySelector('.modal-content').innerHTML = options.template.content;
+        this.Context.querySelector(".modal-content").innerHTML =
+            options.template.content;
 
-        const terminalForm = this.Context.querySelector("#terminal-prompt") as HTMLFormElement;
-        const terminal = new SimpleBar(this.Context.querySelector("#line-container"));
-        const promptLabel = this.Context.querySelector('label[for="prompt"]') as HTMLElement;
+        const terminalForm = this.Context.querySelector(
+            "#terminal-prompt"
+        ) as HTMLFormElement;
+        const terminal = new SimpleBar(
+            this.Context.querySelector("#line-container")
+        );
+        const promptLabel = this.Context.querySelector(
+            'label[for="prompt"]'
+        ) as HTMLElement;
         promptLabel.innerHTML = getPrompt("~");
-        
-        terminalForm.addEventListener('submit', async (e) => {
+
+        terminalForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-        
-            const el = document.createElement('p');
-        
-            el.classList.add('terminal-line');
-        
+
+            const el = document.createElement("p");
+
+            el.classList.add("terminal-line");
+
             //@ts-ignore
-            const result = await window.electronAPI.shell.execute(terminalForm.prompt.value);
-        
+            const result = await window.electronAPI.shell.execute(
+                terminalForm.prompt.value
+            );
+
             const prompt = getPrompt(result.currentPath);
             el.innerHTML = promptLabel.innerHTML + terminalForm.prompt.value;
             promptLabel.innerHTML = prompt;
-        
-            terminal.getContentElement().appendChild(el)
+
+            terminal.getContentElement().appendChild(el);
             commandHandler[result.cmdName](result.cmdName, result.content);
-        
+
             terminal.recalculate();
-        
+
             const scroll = terminal.getScrollElement();
             scroll.scrollBy(0, scroll.scrollHeight);
-        
+
             terminalForm.prompt.value = "";
         });
-        
+
         function getPrompt(path: string) {
-            const pathEl = document.createElement('span') as HTMLSpanElement;
-            pathEl.innerText = path
-            pathEl.classList.add('folder-path');
-        
-            return moment().format('HH:MM') + " | SR | " + pathEl.outerHTML + " > ";
+            const pathEl = document.createElement("span") as HTMLSpanElement;
+            pathEl.innerText = path;
+            pathEl.classList.add("folder-path");
+
+            return (
+                moment().format("HH:MM") + " | SR | " + pathEl.outerHTML + " > "
+            );
         }
-        
+
         const commandHandler: CommandHandler = {
-            "ls": lsCommand,
-            "cd": cdCommand,
-            "help": helpCommand,
-            "exec": execCommand
-        }
-        
+            ls: lsCommand,
+            cd: cdCommand,
+            help: helpCommand,
+            exec: execCommand
+        };
+
         function lsCommand(cmd: string, content: any) {
-            const elContainer = document.createElement('div');
-            elContainer.classList.add('file-container')
-        
+            const elContainer = document.createElement("div");
+            elContainer.classList.add("file-container");
+
             content.map(({ file, type }: any) => {
-                const el = document.createElement('span');
+                const el = document.createElement("span");
                 el.innerText = file;
-        
-                if (type === FileType.DIRECTORY) el.classList.add('folder')
-        
+
+                if (type === FileType.DIRECTORY) el.classList.add("folder");
+
                 elContainer.appendChild(el);
-            })
-        
+            });
+
             terminal.getContentElement().appendChild(elContainer);
         }
-        
-        function cdCommand() {}
-        
-        function helpCommand() {}
-        
-        function execCommand() {}
 
+        function cdCommand() {}
+
+        function helpCommand() {}
+
+        function execCommand() {}
     }
 }
 
-
-export const ShellTemplate: IWindowTemplate ={
+export const ShellTemplate: IWindowTemplate = {
     name: "Shell",
     content: `
     <div class="terminal">
@@ -100,4 +113,4 @@ export const ShellTemplate: IWindowTemplate ={
         </form>
     </div>
     `
-} 
+};

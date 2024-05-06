@@ -22,8 +22,8 @@ type MoveListenerCallback = (x: number, y: number) => void;
 export class Window {
     protected _context: HTMLElement;
     protected _parent: HTMLElement;
-    //   protected _data: any = {};
-    // protected _links:     any = { next: [], prev: null};
+    //   protected _data: unknown = {};
+    // protected _links:     unknown = { next: [], prev: null};
     protected _order: number = 0;
 
     private _pos1: number = 0;
@@ -60,7 +60,7 @@ export class Window {
         );
         modalName.innerText = windowName || template.name;
 
-        this._parent = document.getElementById("content")!;
+        this._parent = document.getElementById("content");
         this._parent.append(this.Context);
 
         this.initDragElement(x, y);
@@ -70,9 +70,13 @@ export class Window {
         this._onElementDrag = this.elementDrag.bind(this);
         this._onElementLeave = this.mouseLeaveScreen.bind(this);
 
-        this.Context.addEventListener("click", () =>
-            this.Context.classList.add("focus")
-        );
+        this.Context.addEventListener("click", () => {
+            document.querySelectorAll(".draggable.focus").forEach((el) => {
+                el.classList.remove("focus");
+            });
+
+            this.Context.classList.add("focus");
+        });
 
         this.Context.querySelector("#close").addEventListener(
             "click",
@@ -112,9 +116,8 @@ export class Window {
 
     private async bindBtns(btnsNames: string[]) {
         for (const name of btnsNames) {
-            const field = this.Context.querySelector(
-                `#add-${name.toLowerCase()}`
-            );
+            // const field =
+            this.Context.querySelector(`#add-${name.toLowerCase()}`);
             // field!.addEventListener('click', (await this.addWindow(name)).bind(this) /*() => this._addLink(Fieldthis(_offsetX, offsetY, parent))*/);
         }
     }
@@ -134,7 +137,7 @@ export class Window {
     //   }
     // }
 
-    public getData(): any {
+    public getData(): unknown {
         const data = {
             name: this.Context.id,
             order: this._order
@@ -162,9 +165,9 @@ export class Window {
             // if present, the header is where you move the DIV from:
             this.Context.querySelector(
                 "#" + this.Context.id + "header"
-            )!.addEventListener("mousedown", this.dragMouseDown.bind(this));
+            ).addEventListener("mousedown", this.dragMouseDown.bind(this));
         } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
+            // otherwise, move the DIV from unknownwhere inside the DIV:
             this.Context.addEventListener(
                 "mousedown",
                 this.dragMouseDown.bind(this)
@@ -172,12 +175,16 @@ export class Window {
         }
     }
 
-    private dragMouseDown(e: any) {
-        e = e || window.event;
+    private dragMouseDown(e: DragEvent) {
+        // e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
         this._pos3 = e.clientX;
         this._pos4 = e.clientY;
+        document.querySelectorAll(".draggable.focus").forEach((el) => {
+            el.classList.remove("focus");
+        });
+        this.Context.classList.add("focus");
 
         this.Context.addEventListener("mouseup", this._onElementDragClose);
         // call a function whenever the cursor moves:
@@ -185,12 +192,9 @@ export class Window {
         document.body.addEventListener("mouseleave", this._onElementLeave);
     }
 
-    private elementDrag(e: any) {
-        e = e || window.event;
+    private elementDrag(e: DragEvent) {
         e.preventDefault();
-console.log("lol");
 
-        this.Context.classList.add("focus");
         this.Context.classList.remove("maximized");
         // calculate the new cursor position:
         this._pos1 = this._pos3 - e.clientX;
@@ -216,21 +220,18 @@ console.log("lol");
     }
 
     private closeDragElement() {
-
         // stop moving when mouse button is released:
         // if (this.Context.offsetLeft < 0) this.Context.style.left = "0px";
         if (this.Context.offsetTop < 0) this.Context.style.top = "0px";
 
-        this.Context.classList.remove('focus')
+        this.Context.classList.remove("focus");
 
         this.Context.removeEventListener("mouseup", this._onElementDragClose);
         document.removeEventListener("mousemove", this._onElementDrag);
         document.removeEventListener("mouseleave", this._onElementLeave);
     }
 
-    private mouseLeaveScreen(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    private mouseLeaveScreen() {
         this.closeDragElement();
     }
 }

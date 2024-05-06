@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { getExtension, getMIMEType } from "node-mime-types";
+import { getMIMEType } from "node-mime-types";
 import { ShellCommands, ShellEnvironment } from "./types";
 import { FileType } from "./enum";
 // import { Command, createCommand } from '@commander-js/extra-typings';
@@ -48,7 +48,7 @@ export default class ShellDisplay {
             }
         };
 
-        this.commands.cd = (arg: string[]) => {
+        this.commands.cd = (arg: string[]): unknown[] => {
             const newPath = this.environment.currentPath + "\\" + arg[1];
             const p = path.resolve(newPath);
 
@@ -57,6 +57,7 @@ export default class ShellDisplay {
             this.environment.currentPath = newPath;
             return [];
         };
+
         this.commands.help = () => {};
     }
 
@@ -82,7 +83,7 @@ export default class ShellDisplay {
         };
     }
 
-    Execute(cmd: Function, args: string[]) {
+    Execute(cmd: (param: unknown) => unknown, args: string[]) {
         if (!cmd) return { currentPath: this.Path, content: [] };
 
         const content = cmd(args);

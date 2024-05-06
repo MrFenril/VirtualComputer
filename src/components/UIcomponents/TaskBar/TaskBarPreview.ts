@@ -1,24 +1,25 @@
 import "./Taskbar.css";
 
 export default class TaskBarPreview {
-  private context: HTMLElement = null;
+    private context: HTMLElement = null;
 
-  get Context() {
-    return this.context;
-  }
+    get Context() {
+        return this.context;
+    }
 
-  constructor(parent: HTMLElement, canvas: any) {
-    const el: HTMLElement = document.createElement("div");
-    el.innerHTML = template;
-    el.classList.add("taskbar-preview");
+    constructor(parent: HTMLElement, canvas: HTMLCanvasElement) {
+        const el: HTMLElement = document.createElement("div");
+        el.innerHTML = template;
+        el.classList.add("taskbar-preview");
 
-    el.querySelector<HTMLElement>(".canvas-wrapper").appendChild(canvas);
-    el.querySelector<HTMLElement>(".taskbar-preview-name").innerText = "lol";
+        el.querySelector<HTMLElement>(".canvas-wrapper").appendChild(canvas);
+        el.querySelector<HTMLElement>(".taskbar-preview-name").innerText =
+            "preview-name";
 
-    parent.appendChild(el);
+        parent.appendChild(el);
 
-    this.context = el;
-  }
+        this.context = el;
+    }
 }
 
 const template = `
