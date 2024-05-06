@@ -41,6 +41,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "figlet": "^1.7.0",
     "file-type": "^19.0.0",
+    "html2canvas": "^1.4.1",
     "moment-timezone": "^0.5.45",
     "node-mime-types": "^1.1.2",
     "resize-observer-polyfill": "^1.5.1",
