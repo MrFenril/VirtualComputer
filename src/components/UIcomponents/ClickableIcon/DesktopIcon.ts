@@ -1,3 +1,5 @@
+import TaskManager, { EProcessState } from "../../TaskManager";
+import { MainTemplate, Window } from "../Window/Window";
 import "./desktop-icon.css"
 
 export interface IDesktopIconOptions {
@@ -10,6 +12,7 @@ export interface IDesktopIconOptions {
 
 export default class DesktopIcon {
     private context: HTMLElement = null;
+    private name: string = "";
 
     constructor({
         parent,
@@ -18,6 +21,9 @@ export default class DesktopIcon {
         x = 0,
         y = 0,
     }: IDesktopIconOptions) {
+
+        this.name = name;
+
         this.context = document.createElement('div');
         this.context.innerHTML = template;
         this.context.setAttribute('draggable', "true");
@@ -31,6 +37,7 @@ export default class DesktopIcon {
         if (parent) parent.appendChild(this.context);
 
         this.context.addEventListener("dblclick", (e) => {
+            this.initNewProcess();
         });
 
         this.context.addEventListener('dragstart', (e) => {
@@ -61,6 +68,10 @@ export default class DesktopIcon {
             e.stopPropagation();
             this.context.classList.remove("focus");
         });
+    }
+
+    private initNewProcess() {
+        TaskManager.LoadProcess(this.name);
     }
 }
 
