@@ -1,199 +1,243 @@
 // import Link from "./WindowLink";
 
-import "./draggable_element.css"
+import "./draggable_element.css";
 
 export interface IWindowTemplate {
-  name: string,
-  content: string
+    name: string;
+    content: string;
 }
 
 export interface IWindowOption {
-  template: IWindowTemplate,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  parent?: HTMLElement,
-  availableBtns?: string[],
+    template: IWindowTemplate;
+    windowName?: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    parent?: HTMLElement;
+    availableBtns?: string[];
 }
 
+type MoveListenerCallback = (x: number, y: number) => void;
 export class Window {
-  protected _context:   HTMLElement;
-  protected _parent:    HTMLElement;
-  protected _data:      any = {};
-  // protected _links:     any = { next: [], prev: null};
-  protected _order:     number = 0;
+    protected _context: HTMLElement;
+    protected _parent: HTMLElement;
+    //   protected _data: any = {};
+    // protected _links:     any = { next: [], prev: null};
+    protected _order: number = 0;
 
-  private _pos1:        number = 0;
-  private _pos2:        number = 0;
-  private _pos3:        number = 0;
-  private _pos4:        number = 0;
+    private _pos1: number = 0;
+    private _pos2: number = 0;
+    private _pos3: number = 0;
+    private _pos4: number = 0;
 
-  private _onMoveListener: Function[] = [];
+    private _onMoveListener: MoveListenerCallback[] = [];
 
-  private _onElementDragClose: any;
-  private _onElementDrag: any;
+    private _onElementDragClose: any;
+    private _onElementDrag: any;
+    private _onElementLeave: any;
 
-  constructor({
-    template,
-    x,
-    y,
-    width = 300, height = 200,
-    availableBtns = []
-  }: IWindowOption) {
-      this._context = document.createElement('div');
-      this.Context.id = template.name;
-      this.Context.className = 'draggable'
-      this.Context.style.width = `${width}px`;
-      this.Context.style.height = `${height}px`;
+    constructor({
+        template,
+        windowName,
+        x,
+        y,
+        width = 300,
+        height = 200,
+        availableBtns = []
+    }: IWindowOption) {
+        this._context = document.createElement("div");
+        this.Context.id = template.name;
+        this.Context.className = "draggable";
+        this.Context.style.width = `${width}px`;
+        this.Context.style.height = `${height}px`;
 
-      const divContent = template.content;
-      this.Context.innerHTML = divContent;
+        const divContent = template.content;
+        this.Context.innerHTML = divContent;
 
-      this._parent = document.getElementById('content')!;
-      this._parent.append(this.Context);
+        const modalName: HTMLElement = this.Context.querySelector(
+            ".modal-header > span"
+        );
+        modalName.innerText = windowName || template.name;
 
-      this.initDragElement(x, y);
-      this.bindBtns(availableBtns);
+        this._parent = document.getElementById("content")!;
+        this._parent.append(this.Context);
 
-      this._onElementDragClose = this.closeDragElement.bind(this);
-      this._onElementDrag = this.elementDrag.bind(this);
+        this.initDragElement(x, y);
+        this.bindBtns(availableBtns);
 
-      this.Context.addEventListener('click', () => this.Context.classList.add('focus'));
+        this._onElementDragClose = this.closeDragElement.bind(this);
+        this._onElementDrag = this.elementDrag.bind(this);
+        this._onElementLeave = this.mouseLeaveScreen.bind(this);
 
-      this.Context.querySelector('#close').addEventListener('click', this.CloseWindow.bind(this));
-      this.Context.querySelector('#maximize').addEventListener('click', this.MaximizeWindow.bind(this));
-      this.Context.querySelector('#minimize').addEventListener('click', this.MinimizeWindow.bind(this));
-  }
+        this.Context.addEventListener("click", () =>
+            this.Context.classList.add("focus")
+        );
 
-  public get Context() {
-    return this._context;
-  }
-
-  public MinimizeWindow() {
-    this.Context.classList.add('minimized');
-  }
-
-  public MaximizeWindow(e: MouseEvent | null) {
-    if (e) {
-      e.preventDefault();
+        this.Context.querySelector("#close").addEventListener(
+            "click",
+            this.CloseWindow.bind(this)
+        );
+        this.Context.querySelector("#maximize").addEventListener(
+            "click",
+            this.MaximizeWindow.bind(this)
+        );
+        this.Context.querySelector("#minimize").addEventListener(
+            "click",
+            this.MinimizeWindow.bind(this)
+        );
     }
-    this.Context.classList.toggle('maximized');
 
-  }
-
-  public CloseWindow() {
-    this.closeDragElement();
-    this.Context.remove();
-  }
-
-  private async bindBtns(btnsNames: string[]) {
-    for (const name of btnsNames) {
-      const field = this.Context.querySelector(`#add-${name.toLowerCase()}`);
-      field!.addEventListener('click', (await this.addWindow(name)).bind(this) /*() => this._addLink(Fieldthis(_offsetX, offsetY, parent))*/);
+    public get Context() {
+        return this._context;
     }
-  }
 
-  private async addWindow(elementName: string) {
-    return async () => {
-      const x = this.Context.offsetLeft + this.Context.clientWidth + 50;
-      const y = this.Context.offsetTop;
-
-      const component = await import(/* @vite-ignore */`../Window components/${elementName}.ts`)
-
-      const draggable = new component.default(x, y, parent);
-
-      // new Link(this, draggable);
-
-      // this._links.next.push(draggable);
+    public MinimizeWindow(): boolean {
+        this.Context.classList.toggle("minimized");
+        return this.Context.classList.contains("minimized");
     }
-  }
 
-  public getData(): any {
-      const data = {
-          name: this.Context.id,
-          order: this._order,
-          // children: this._links.next.map((link: Window) => link.getData())
-      };
-
-      return data;
-  }
-
-  public onMoveEvent(callback: Function) {
-    this._onMoveListener.push(callback);
-  }
-
-  // public getLinks() {
-  //   return this._links;
-  // }
-
-  protected initDragElement(x: number, y: number) {
-    this.Context.style.top = `${y}px`;
-    this.Context.style.left = `${x}px`;
-
-    console.log(this.Context.id + "header", x, y);
-
-    if (this.Context.querySelector("#"+this.Context.id + "header")) {
-      // if present, the header is where you move the DIV from:
-      this.Context.querySelector("#"+this.Context.id + "header")!.addEventListener('mousedown', this.dragMouseDown.bind(this));
-    } else {
-      // otherwise, move the DIV from anywhere inside the DIV:
-      this.Context.addEventListener('mousedown', this.dragMouseDown.bind(this));
+    public MaximizeWindow(e: MouseEvent | null): boolean {
+        if (e) {
+            e.stopPropagation();
+        }
+        this.Context.classList.toggle("maximized");
+        return this.Context.classList.contains("maximized");
     }
-  }
 
-  private dragMouseDown(e: any) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    this._pos3 = e.clientX;
-    this._pos4 = e.clientY;
+    public CloseWindow() {
+        this.closeDragElement();
+        this.Context.remove();
+    }
 
-    this.Context.addEventListener('mouseup', this._onElementDragClose);
-    // call a function whenever the cursor moves:
-    document.addEventListener('mousemove', this._onElementDrag);
-  }
+    private async bindBtns(btnsNames: string[]) {
+        for (const name of btnsNames) {
+            const field = this.Context.querySelector(
+                `#add-${name.toLowerCase()}`
+            );
+            // field!.addEventListener('click', (await this.addWindow(name)).bind(this) /*() => this._addLink(Fieldthis(_offsetX, offsetY, parent))*/);
+        }
+    }
 
-  private elementDrag(e: any) {
-    e = e || window.event;
-    e.preventDefault();
+    // private async addWindow(elementName: string) {
+    //   return async () => {
+    //     const x = this.Context.offsetLeft + this.Context.clientWidth + 50;
+    //     const y = this.Context.offsetTop;
 
-    this.Context.classList.add('focus')
-    this.Context.classList.remove('maximized')
-    // calculate the new cursor position:
-    this._pos1 = this._pos3 - e.clientX;
-    this._pos2 = this._pos4 - e.clientY;
+    //     const component = await import(/* @vite-ignore */`../Window components/${elementName}.ts`)
 
-    this._pos3 = e.clientX;
-    this._pos4 = e.clientY;
+    //     const draggable = new component.default(x, y, parent);
 
-    const x:number = (this.Context.offsetTop - this._pos1);
-    const y:number = (this.Context.offsetTop - this._pos2);
-    // set the element's new position:
-    this.Context.style.top = (this.Context.offsetTop - this._pos2) + "px";
-    this.Context.style.left = (this.Context.offsetLeft - this._pos1) + "px";
+    //     // new Link(this, draggable);
 
-    if (this.Context.offsetLeft < 0) this.Context.style.left = '0px';
-    if (this.Context.offsetTop < 0) this.Context.style.top = '0px';
+    //     // this._links.next.push(draggable);
+    //   }
+    // }
 
-    this._onMoveListener.forEach((fn) => { fn(x, y) })
-    // this._links.next.forEach(link => link.update());
-    // this._links.prev.forEach(link => link.update());
-  }
+    public getData(): any {
+        const data = {
+            name: this.Context.id,
+            order: this._order
+            // children: this._links.next.map((link: Window) => link.getData())
+        };
 
-  private closeDragElement() {
-    // stop moving when mouse button is released:
-    if (this.Context.offsetLeft < 0) this.Context.style.left = '0px';
-    if (this.Context.offsetTop < 0) this.Context.style.top = '0px';
+        return data;
+    }
 
-    this.Context.removeEventListener('mouseup', this._onElementDragClose);
-    document.removeEventListener('mousemove', this._onElementDrag);
-  }
+    public onMoveEvent(callback: MoveListenerCallback) {
+        this._onMoveListener.push(callback);
+    }
+
+    // public getLinks() {
+    //   return this._links;
+    // }
+
+    protected initDragElement(x: number, y: number) {
+        this.Context.style.top = `${y}px`;
+        this.Context.style.left = `${x}px`;
+
+        console.log(this.Context.id + "header", x, y);
+
+        if (this.Context.querySelector("#" + this.Context.id + "header")) {
+            // if present, the header is where you move the DIV from:
+            this.Context.querySelector(
+                "#" + this.Context.id + "header"
+            )!.addEventListener("mousedown", this.dragMouseDown.bind(this));
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            this.Context.addEventListener(
+                "mousedown",
+                this.dragMouseDown.bind(this)
+            );
+        }
+    }
+
+    private dragMouseDown(e: any) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        this._pos3 = e.clientX;
+        this._pos4 = e.clientY;
+
+        this.Context.addEventListener("mouseup", this._onElementDragClose);
+        // call a function whenever the cursor moves:
+        document.addEventListener("mousemove", this._onElementDrag);
+        document.body.addEventListener("mouseleave", this._onElementLeave);
+    }
+
+    private elementDrag(e: any) {
+        e = e || window.event;
+        e.preventDefault();
+console.log("lol");
+
+        this.Context.classList.add("focus");
+        this.Context.classList.remove("maximized");
+        // calculate the new cursor position:
+        this._pos1 = this._pos3 - e.clientX;
+        this._pos2 = this._pos4 - e.clientY;
+
+        this._pos3 = e.clientX;
+        this._pos4 = e.clientY;
+
+        const x: number = this.Context.offsetTop - this._pos1;
+        const y: number = this.Context.offsetTop - this._pos2;
+        // set the element's new position:
+        this.Context.style.top = this.Context.offsetTop - this._pos2 + "px";
+        this.Context.style.left = this.Context.offsetLeft - this._pos1 + "px";
+
+        // if (this.Context.offsetLeft < 0) this.Context.style.left = "0px";
+        // if (this.Context.offsetTop < 0) this.Context.style.top = "0px";
+
+        this._onMoveListener.forEach((fn) => {
+            fn(x, y);
+        });
+        // this._links.next.forEach(link => link.update());
+        // this._links.prev.forEach(link => link.update());
+    }
+
+    private closeDragElement() {
+
+        // stop moving when mouse button is released:
+        // if (this.Context.offsetLeft < 0) this.Context.style.left = "0px";
+        if (this.Context.offsetTop < 0) this.Context.style.top = "0px";
+
+        this.Context.classList.remove('focus')
+
+        this.Context.removeEventListener("mouseup", this._onElementDragClose);
+        document.removeEventListener("mousemove", this._onElementDrag);
+        document.removeEventListener("mouseleave", this._onElementLeave);
+    }
+
+    private mouseLeaveScreen(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        this.closeDragElement();
+    }
 }
 
 export const MainTemplate: IWindowTemplate = {
-  name: 'MainModal',
-  content: `
+    name: "MainModal",
+    content: `
   <div id="MainModalheader" class="modal-header" tabindex="0">
       <span>Base window</span>
       <div class="header-overlay">
@@ -234,4 +278,4 @@ export const MainTemplate: IWindowTemplate = {
       </div>
   </div>
   `
-}
+};
