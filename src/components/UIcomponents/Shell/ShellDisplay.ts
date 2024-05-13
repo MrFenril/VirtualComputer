@@ -7,12 +7,12 @@ import {
     IWindowOption,
     IWindowTemplate,
     MainTemplate,
-    Window
-} from "../Window/Window";
+    BaseWindow
+} from "../Window/BaseWindow";
 
 import "./shell-display.css";
 
-export default class ShellDisplay extends Window {
+export default class ShellDisplay extends BaseWindow {
     constructor(options: IWindowOption) {
         super({
             ...options,

@@ -31,7 +31,8 @@ import ShellDisplay, {
         height: 400
     });
 
-    TaskManager.LoadProcess("BaseWindow");
+    await TaskManager.LoadProcess("BaseWindow");
+    await TaskManager.LoadProcess("Shell");
 
     new TaskBar();
 })();

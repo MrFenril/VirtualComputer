@@ -1,16 +1,15 @@
 import { addElement } from "../helpers";
-import { Window } from "./UIcomponents/Window/Window"
+import { BaseWindow } from "./UIcomponents/Window/BaseWindow"
 
 export default class Link {
 
-    private _start:         Window;
-    private _end:           Window;
+    private _start:         BaseWindow;
+    private _end:           BaseWindow;
     private _context:       HTMLElement;
 
-    constructor(start: Window, end: Window) {
+    constructor(start: BaseWindow, end: BaseWindow) {
         this._start = start;
         this._end = end;
-
 
         this._start.onMoveEvent(this.update.bind(this));
         this._end.onMoveEvent(this.update.bind(this));

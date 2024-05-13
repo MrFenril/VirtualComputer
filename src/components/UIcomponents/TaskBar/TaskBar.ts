@@ -1,6 +1,7 @@
 import html2canvas from "html2canvas";
-import TaskManager, { EProcessState, IProcess } from "../../TaskManager";
+import TaskManager, { EProcessState, IProcess, IProcesses } from "../../TaskManager";
 import TaskBarPreview from "./TaskBarPreview";
+import { BaseWindow } from '../Window/BaseWindow';
 
 export interface ITaskBarOptions {
     pinned: Array<{
@@ -35,6 +36,10 @@ export default class TaskBar {
             if (process.index > 1) return;
             this.addProcessToTaskbar(process);
         });
+
+        TaskManager.addEventListener("unload", (process: BaseWindow, otherProcesses: IProcess[]) => {
+            this.removeProcessFromTaskbar(process, otherProcesses);
+        });
     }
 
     private addProcessToTaskbar(process: IProcess) {
@@ -45,6 +50,8 @@ export default class TaskBar {
         el.classList.add("taskbar-btn");
 
         el.classList.add("active");
+
+        console.log("lol");
 
         el.addEventListener("click", () => process.process.MinimizeWindow());
 
@@ -62,6 +69,16 @@ export default class TaskBar {
             preview = null;
         });
 
+        el.setAttribute("data-windowname", process.name);
         this.context.querySelector(".taskbar-btns-container").appendChild(el);
+    }
+
+    private removeProcessFromTaskbar(process: BaseWindow, otherProcesses: IProcess[]) {
+        // Keep icon displayed if pinned on taskbar
+        // Todo: implement pinning system
+        // if (process.pin) return;
+
+        if (otherProcesses.length > 0) return;
+        this.context.querySelector(`button[data-windowname="${process._windowName}"]`).remove();
     }
 }

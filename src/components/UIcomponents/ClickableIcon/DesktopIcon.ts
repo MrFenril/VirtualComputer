@@ -64,8 +64,8 @@ export default class DesktopIcon {
         });
     }
 
-    private initNewProcess() {
-        TaskManager.LoadProcess(this.name);
+    private async initNewProcess() {
+        await TaskManager.LoadProcess(this.name);
     }
 }
 

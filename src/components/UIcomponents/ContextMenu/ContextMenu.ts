@@ -1,5 +1,5 @@
 import DesktopIcon from "../ClickableIcon/DesktopIcon";
-import { MainTemplate, Window } from "../Window/Window";
+import { MainTemplate, BaseWindow } from "../Window/BaseWindow";
 import "./context-menu.css"
 
 export default class ContextMenu {
@@ -34,7 +34,7 @@ export default class ContextMenu {
         this.context.querySelector('#open-new-window')
                 .addEventListener('click', (e: MouseEvent) => {
 
-                    new Window({
+                    new BaseWindow({
                         template: MainTemplate,
                         x: this.context.offsetLeft, y: this.context.offsetTop,
                         width: 200, height: 200

@@ -3,8 +3,6 @@ import fs from "fs";
 import { getMIMEType } from "node-mime-types";
 import { ShellCommands, ShellEnvironment } from "./types";
 import { FileType } from "./enum";
-// import { Command, createCommand } from '@commander-js/extra-typings';
-// import { createCommand } from 'commander';
 
 export default class ShellDisplay {
     private basePath: string = path.resolve("./root");
@@ -23,7 +21,7 @@ export default class ShellDisplay {
                 const currentPath =
                     args.length > 1
                         ? path.resolve(
-                              this.environment.currentPath + "\\" + args[1]
+                              this.environment.currentPath + "/" + args[1]
                           )
                         : path.resolve(this.environment.currentPath);
 
@@ -49,7 +47,7 @@ export default class ShellDisplay {
         };
 
         this.commands.cd = (arg: string[]): unknown[] => {
-            const newPath = this.environment.currentPath + "\\" + arg[1];
+            const newPath = this.environment.currentPath + "/" + arg[1];
             const p = path.resolve(newPath);
 
             if (!fs.existsSync(p) || !fs.lstatSync(p).isDirectory()) return [];

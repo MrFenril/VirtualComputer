@@ -1,5 +1,6 @@
 // import Link from "./WindowLink";
 
+import TaskManager from "../../TaskManager";
 import "./draggable_element.css";
 
 export interface IWindowTemplate {
@@ -19,9 +20,13 @@ export interface IWindowOption {
 }
 
 type MoveListenerCallback = (x: number, y: number) => void;
-export class Window {
-    protected _context: HTMLElement;
+
+export class BaseWindow {
+    protected _template: IWindowTemplate = MainTemplate;
+    protected _context: HTMLElement = document.createElement('div');
+
     protected _parent: HTMLElement;
+    public _windowName: string;
     //   protected _data: unknown = {};
     // protected _links:     unknown = { next: [], prev: null};
     protected _order: number = 0;
@@ -46,7 +51,7 @@ export class Window {
         height = 200,
         availableBtns = []
     }: IWindowOption) {
-        this._context = document.createElement("div");
+
         this.Context.id = template.name;
         this.Context.className = "draggable";
         this.Context.style.width = `${width}px`;
@@ -58,6 +63,8 @@ export class Window {
         const modalName: HTMLElement = this.Context.querySelector(
             ".modal-header > span"
         );
+
+        this._windowName = windowName;
         modalName.innerText = windowName || template.name;
 
         this._parent = document.getElementById("content");
@@ -111,6 +118,7 @@ export class Window {
 
     public CloseWindow() {
         this.closeDragElement();
+        TaskManager.UnloadProcess(this);
         this.Context.remove();
     }
 
@@ -239,7 +247,7 @@ export class Window {
 export const MainTemplate: IWindowTemplate = {
     name: "MainModal",
     content: `
-  <div id="MainModalheader" class="modal-header" tabindex="0">
+  <div id="MainModalheader" class="modal-header" tabindex="-1">
       <span>Base window</span>
       <div class="header-overlay">
         <button id="minimize">

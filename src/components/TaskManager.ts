@@ -1,5 +1,5 @@
 import EventEmitter from "./EventEmitter"
-import { MainTemplate, Window } from "./UIcomponents/Window/Window"
+import { BaseWindow } from "./UIcomponents/Window/BaseWindow"
 
 export enum EProcessState {
     INACTIVE,
@@ -13,7 +13,7 @@ export interface IProcess {
     state: EProcessState,
     index: number
     element?: HTMLElement,
-    process?: Window
+    process?: BaseWindow
 }
 
 export interface IProcesses {
@@ -31,7 +31,8 @@ class TaskManager extends EventEmitter {
         return this.processes;
     }
 
-    public LoadProcess(processName: string): IProcess {
+    public async LoadProcess(processName: string): Promise<IProcess> {
+        const { MainTemplate, BaseWindow } = await import("./UIcomponents/Window/BaseWindow");
         const processWindow = {
             template: MainTemplate,
             windowName: processName,
@@ -41,7 +42,7 @@ class TaskManager extends EventEmitter {
             height: 400
         };
 
-        const win: Window = new Window(processWindow);
+        const win: BaseWindow = new BaseWindow(processWindow);
 
         if (!this.processes[processName]) this.processes[processName] = {
             name: processName,
@@ -61,6 +62,12 @@ class TaskManager extends EventEmitter {
         this.emits("load", process, this.processes);
 
         return process;
+    }
+
+    public async UnloadProcess(process: BaseWindow): Promise<void> {
+        const idx = this.processes[process._windowName].children.findIndex((p) => p.process === process);
+        this.processes[process._windowName].children.splice(idx, 1);
+        this.emits("unload", process, this.processes[process._windowName].children, this.processes);
     }
 
     public GetProcess(processName: string, index: number = 0): IProcess {
