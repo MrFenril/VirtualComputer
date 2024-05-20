@@ -1,12 +1,8 @@
 import ContextMenu from "../components/UIcomponents/ContextMenu/ContextMenu";
 import DesktopIcon from "../components/UIcomponents/ClickableIcon/DesktopIcon";
 import TaskBar from "../components/UIcomponents/TaskBar/TaskBar";
-import TaskManager from "../components/TaskManager";
 import System from "../components/System/System";
 import { ISystemInitObj } from "../types";
-
-// ShellDisplay;
-// BaseWindow;
 
 (async () => {
     const initObj: ISystemInitObj = await window.electronAPI.environment.init() as ISystemInitObj;
@@ -31,17 +27,6 @@ import { ISystemInitObj } from "../types";
         });
     }
 
-    // new ShellDisplay({
-    //     template: ShellTemplate,
-    //     windowName: "Shell",
-    //     x: 300,
-    //     y: 100,
-    //     width: 700,
-    //     height: 400
-    // });
-
-    // await TaskManager.LoadProcess("BaseWindow");
-    // await TaskManager.LoadProcess("Shell");
 
     new TaskBar();
 })();
