@@ -23,7 +23,7 @@ export default class Environment {
 
     get Variables() { return this.variables }
     get CurrentPath() { return this.location }
-    get Executable() { return this.executables }
+    get Executable(): any { return this.executables }
 
     constructor({ path, usr, executables }: ISystemInitObj) {
         this.variables.USR = usr;

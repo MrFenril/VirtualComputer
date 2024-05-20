@@ -11,7 +11,8 @@ if (require('electron-squirrel-startup')) app.quit();
 const shell = new Shell();
 
 const createWindow = () => {
-  VirtualEnvironment;
+
+  VirtualEnvironment.InitEnvironnement();
 
   // const mainWindow = new BrowserWindow({
   //   width: 800,
@@ -40,8 +41,7 @@ const createWindow = () => {
   });
 
   // test.setAlwaysOnTop(true);
-  // test.setMenu(null);
-  // console.log("URL: ", COMPUTER_WINDOW_VITE_DEV_SERVER_URL);
+  test.webContents.openDevTools();
 
   test.loadURL(COMPUTER_WINDOW_VITE_DEV_SERVER_URL)
 
@@ -91,13 +91,6 @@ function SystemInitialisation() {
 //#region Electron events
 
 app.on('ready', createWindow);
-// app.whenReady().then(() => {
-//   process.on('SIGINT', () => {
-//     console.log("lol");
-
-//     VirtualEnvironment.unload();
-//   });
-// })
 
 app.on('before-quit', () => {
   // console.log("here");

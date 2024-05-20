@@ -12,7 +12,7 @@ export interface ShellEnvironment {
 }
 
 export interface ISystemInitObj {
-    initPath: string,
+    path: string,
     usr: string,
     executables: any[]
 }

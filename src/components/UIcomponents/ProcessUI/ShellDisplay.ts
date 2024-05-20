@@ -1,24 +1,22 @@
 import SimpleBar from "simplebar";
 import "simplebar/dist/simplebar.css";
 import moment from "moment-timezone";
-import { CommandHandler } from "../../../../types";
-import { FileType } from "../../../../enum";
-import System from "../../../System/System";
-
+import { CommandHandler } from "../../../types";
+import { FileType } from "../../../enum";
 import {
     IWindowOption,
     IWindowTemplate,
-    MainTemplate,
+    Template as BaseTemplate,
     BaseWindow
-} from "../../Window/BaseWindow";
+} from "../Window/BaseWindow";
 
-import "./shell-display.css";
+import "./styles/shell-display.css";
 
 export default class ShellDisplay extends BaseWindow {
     constructor(options: IWindowOption) {
         super({
             ...options,
-            template: MainTemplate
+            template: BaseTemplate
         });
 
         this.Context.querySelector(".modal-content").innerHTML =
@@ -42,7 +40,8 @@ export default class ShellDisplay extends BaseWindow {
 
             el.classList.add("terminal-line");
 
-            const result: any = await window.electronAPI.shell.execute(
+            //@ts-ignore
+            const result = await window.electronAPI.shell.execute(
                 terminalForm.prompt.value
             );
 
@@ -67,7 +66,7 @@ export default class ShellDisplay extends BaseWindow {
             pathEl.classList.add("folder-path");
 
             return (
-                `${moment().format("HH:MM")} | ${ System.Environment.Variables.USR } | ${ pathEl.outerHTML} >`
+                moment().format("HH:MM") + " | SR | " + pathEl.outerHTML + " > "
             );
         }
 
@@ -102,7 +101,7 @@ export default class ShellDisplay extends BaseWindow {
     }
 }
 
-export const ShellTemplate: IWindowTemplate = {
+export const Template: IWindowTemplate = {
     name: "Shell",
     content: `
     <div class="terminal">

@@ -32,9 +32,9 @@ class TaskManager extends EventEmitter {
     }
 
     public async LoadProcess(processName: string): Promise<IProcess> {
-        const { MainTemplate, BaseWindow } = await import("./UIcomponents/Window/BaseWindow");
+        const { Template, BaseWindow } = await import("./UIcomponents/Window/BaseWindow");
         const processWindow = {
-            template: MainTemplate,
+            template: Template,
             windowName: processName,
             x: 100,
             y: 100,

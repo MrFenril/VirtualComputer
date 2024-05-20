@@ -2,15 +2,18 @@ import ContextMenu from "../components/UIcomponents/ContextMenu/ContextMenu";
 import DesktopIcon from "../components/UIcomponents/ClickableIcon/DesktopIcon";
 import TaskBar from "../components/UIcomponents/TaskBar/TaskBar";
 import TaskManager from "../components/TaskManager";
-import ShellDisplay, {
-    ShellTemplate
-} from "../components/UIcomponents/ProcessUI/Shell/ShellDisplay";
-import System, { ISystemInitObj } from "../components/System/System";
+import System from "../components/System/System";
+import { ISystemInitObj } from "../types";
+
+// ShellDisplay;
+// BaseWindow;
 
 (async () => {
     const initObj: ISystemInitObj = await window.electronAPI.environment.init() as ISystemInitObj;
+
     await System.init(initObj);
     // new System();
+    System.LoadProcess('ShellDisplay', '')
 
     new ContextMenu();
 
@@ -28,17 +31,17 @@ import System, { ISystemInitObj } from "../components/System/System";
         });
     }
 
-    new ShellDisplay({
-        template: ShellTemplate,
-        windowName: "Shell",
-        x: 300,
-        y: 100,
-        width: 700,
-        height: 400
-    });
+    // new ShellDisplay({
+    //     template: ShellTemplate,
+    //     windowName: "Shell",
+    //     x: 300,
+    //     y: 100,
+    //     width: 700,
+    //     height: 400
+    // });
 
-    await TaskManager.LoadProcess("BaseWindow");
-    await TaskManager.LoadProcess("Shell");
+    // await TaskManager.LoadProcess("BaseWindow");
+    // await TaskManager.LoadProcess("Shell");
 
     new TaskBar();
 })();

@@ -1,5 +1,6 @@
 import { ISystemInitObj } from "../../types";
 import EventEmitter from "../EventEmitter";
+import { BaseWindow, IWindowTemplate } from "../UIcomponents/Window/BaseWindow";
 import Environment from "./Environment";
 import SystemObject from "./SystemObject";
 
@@ -41,18 +42,23 @@ class System extends EventEmitter {
         this.environment = new Environment(init);
     }
 
-    public async LoadProcess(obj: any): Promise<SystemObject> {
-        // const { MainTemplate, BaseWindow } = await import("./UIcomponents/Window/BaseWindow");
-        // const processWindow = {
-        //     template: MainTemplate,
-        //     windowName: processName,
-        //     x: 100,
-        //     y: 100,
-        //     width: 400,
-        //     height: 400
-        // };
+    public async LoadProcess(processName: string, ...params: string[]): Promise<SystemObject> {
+        const processInfo = this.environment.Executable[processName];
 
-        // const win: BaseWindow = new BaseWindow(processWindow);
+        const Component = await import(/* @vite-ignore */ `../UIComponents/ProcessUI/${processInfo.ui_path}`);
+
+        const processWindow = {
+            template: Component.Template,
+            windowName: processName,
+            x: 100,
+            y: 100,
+            width: 400,
+            height: 400
+        };
+
+        // Class is exported as default so *.default is representinf the class
+        const win: BaseWindow = new Component.default(processWindow);
+        console.log(win);
 
         // if (!this.processes[processName]) this.processes[processName] = {
         //     name: processName,
@@ -68,10 +74,10 @@ class System extends EventEmitter {
         //     process: win
         // }
 
-        this.processes[processName].children.push(process);
-        this.emits("load", process, this.processes);
+        // this.processes[processName].children.push(process);
+        // this.emits("load", process, this.processes);
 
-        return process;
+        // return process;
     }
 
     public async UnloadProcess(process: BaseWindow): Promise<void> {

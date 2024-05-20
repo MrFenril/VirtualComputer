@@ -1,7 +1,7 @@
 // import Link from "./WindowLink";
 
-import TaskManager from "../../TaskManager";
-import "./draggable_element.css";
+// import TaskManager from "../../TaskManager";
+import "./styles/draggable_element.css";
 
 export interface IWindowTemplate {
     name: string;
@@ -21,8 +21,8 @@ export interface IWindowOption {
 
 type MoveListenerCallback = (x: number, y: number) => void;
 
-export class BaseWindow {
-    protected _template: IWindowTemplate = MainTemplate;
+export default class BaseWindow {
+    protected _template: IWindowTemplate = Template;
     protected _context: HTMLElement = document.createElement('div');
 
     protected _parent: HTMLElement;
@@ -118,7 +118,7 @@ export class BaseWindow {
 
     public CloseWindow() {
         this.closeDragElement();
-        TaskManager.UnloadProcess(this);
+        // TaskManager.UnloadProcess(this);
         this.Context.remove();
     }
 
@@ -244,7 +244,7 @@ export class BaseWindow {
     }
 }
 
-export const MainTemplate: IWindowTemplate = {
+export const Template: IWindowTemplate = {
     name: "MainModal",
     content: `
   <div id="MainModalheader" class="modal-header" tabindex="-1">
