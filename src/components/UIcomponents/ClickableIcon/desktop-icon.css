@@ -1,0 +1,54 @@
+.desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90px;
+    /* max-height: 86px; */
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.desktop-icon:hover {
+    outline: 1px solid #6f6f6f;
+    background-color: #6f6f6f91;
+}
+
+.desktop-icon.test {
+    pointer-events: none;
+}
+
+.desktop-icon.focus {
+    outline: 1px solid #6f6f6f;
+    background-color: #6f6f6f91;
+    max-height: fit-content;
+}
+
+.desktop-icon.dragged {
+    outline: none;
+    background-color: transparent;
+}
+
+.desktop-icon.focus:hover {
+    background-color: #6f6f6fb9;
+}
+
+.desktop-icon.focus > .desktop-icon-name {
+    word-break: break-all;
+    white-space: normal;
+}
+
+.desktop-icon-inner-icon,
+.desktop-icon-inner-icon > img {
+    width: 42px;
+    height: 42px;
+}
+
+.desktop-icon-name {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
